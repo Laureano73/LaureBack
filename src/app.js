@@ -1,22 +1,31 @@
 import express from "express";
 import { Server } from "socket.io";
+import mongoose from "mongoose";
 import handlebars from "express-handlebars";
+import MongoStore from "connect-mongo";
+import passport from "passport";
+import session from "express-session";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+
 import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import viewsRouter from "./routes/views.routes.js";
-import mongoose from "mongoose";
-import MongoStore from "connect-mongo";
-import session from "express-session";
 import sessionRouter from "./routes/session.routes.js";
-import passport from "passport";
 import initializePassport from "./configs/passport.config.js";
 import { getVariables } from "./configs/config.js";
 import { ErrorHandler } from "./middlewares/error.js";
 import { addLogger } from "./utils/logger.js";
 import testRouter from "./routes/test.routes.js";
+import usersRouter from "./routes/users.routes.js";
+import { swaggerConfig } from "./configs/swagger-config.js";
 
 const { port, mongoUrl, secret } = getVariables();
 const app = express();
+
+const specs = swaggerJSDoc(swaggerConfig);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -51,6 +60,7 @@ app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
 app.use("/api/sessions", sessionRouter);
 app.use("/api/test", testRouter);
+app.use("/api/users", usersRouter);
 
 app.use(ErrorHandler);
 
