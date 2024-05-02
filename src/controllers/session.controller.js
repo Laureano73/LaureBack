@@ -15,7 +15,10 @@ export const register = (req, res) => {
         rol: req.user.rol
     }
     req.logger.info(`User registered: ${req.user.email}`);
-    res.redirect("/products");
+    res.json(req.session.user);
+    setTimeout(() => {
+        res.redirect("/products");
+    }, 100);
 };
 
 export const login = (req, res) => {
@@ -55,6 +58,10 @@ export const forgotPassword = async (req, res) => {
         const { email } = req.body;
         const tokenObj = generateToken();
         const user = await userService.getUser(email);
+        if (!user) {
+            const noUser = true;
+            return res.render("forgot-password", { noUser });
+        }
         await userService.updateUser(user._id, { tokenPassword: tokenObj });
         await mailingService.sendSimpleMail({
             from: "NodeMailer Contant",

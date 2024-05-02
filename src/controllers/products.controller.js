@@ -44,13 +44,14 @@ export const createProduct = async (req, res) => {
             code: ErrorEnum.INVALID_TYPE_ERROR
         });
     }
+    newProduct.owner = req.user.email;
     const addProduct = await productService.createProduct(newProduct);
     if (!addProduct) {
         req.logger.error("Error adding product");
         return res.status(400).send({message: "Error adding product"});
     }
     req.logger.info("Product added");
-    return res.status(201).send({message: "Product added"});
+    return res.status(201).send({message: "Product added", payload: newProduct});
 };
 
 export const updateProduct = async (req, res) => {
@@ -67,6 +68,12 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
     const { pId } = req.params;
+    const product = await productService.getProductById(pId);
+    if (req.user.rol === "premium") {
+        if (product.owner !== req.user.email) {
+            return res.status(403).send({message: "Unauthorized"});
+        }
+    }
     const deleteProduct = await productService.deleteProduct(pId);
     if (deleteProduct.deletedCount === 0) {
         req.logger.error("Product not found");
