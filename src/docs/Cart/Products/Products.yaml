@@ -32,7 +32,7 @@ paths:
           description: El producto no fue creado
         "403":
           description: No tienes permiso para acceder a esta funcionalidad
-  
+
   /api/products/{pid}:
     get:
       summary: Obtiene un solo producto por ID
