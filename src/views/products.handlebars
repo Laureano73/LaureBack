@@ -1,10 +1,15 @@
 <div>
     <div class="nav">
-        <h1>Nuestros Productos</h1>
+        <h1>Productos:</h1>
         <div class="user">
             <h2>Bienvenido: {{user.first_name}} {{user.last_name}}</h2>
             <button><a href="/current">Mi cuenta</a></button>
-            <button id="logout-btn" type="button">Cerrar sesión</button>
+            {{#if admin}}
+                <button><a href="/admin">Administrar</a></button>
+            {{/if}}
+            <form action="/api/sessions/logout" method="post">
+                <button type="submit">Cerrar sesión</button>
+            </form>
         </div>
     </div>
     <div class="grid-container">
@@ -32,5 +37,3 @@
         {{/if}}
     </div>
 </div>
-
-<script src="js/index.js"></script>

@@ -21,7 +21,7 @@ export const register = (req, res) => {
     }, 100);
 };
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
     if (!req.user) {
         req.logger.error("Error with credentials");
         return res.status(401).send({message: "Error with credentials"});
@@ -33,6 +33,9 @@ export const login = (req, res) => {
         age: req.user.age,
         rol: req.user.rol
     }
+    const userLogged = await userService.getUser(req.user.email);
+    userLogged.last_connection = new Date();
+    userLogged.save();
     req.logger.info(`User logged: ${req.user.email}`);
     res.redirect("/products");
 };
@@ -46,7 +49,7 @@ export const logout = (req, res) => {
             }
         });
         req.logger.info("User unlogged");
-        res.send({redirect: "http://localhost:8080/login"});
+        res.redirect("/login");
     } catch (error) {
         req.logger.error(error);
         res.status(400).send({error});
@@ -69,7 +72,7 @@ export const forgotPassword = async (req, res) => {
             subject: "Cambiar contraseña",
             html: `
                 <h1>Hola!!</h1>
-                <p>Haz clic en este <a href="http://localhost:8080/api/sessions/restore-password/${tokenObj.token}">enlace</a> para restablecer tu contraseña.</p>
+                <p>Haz clic en este <a href="http://localhost:8080/api/sessions/restore-password/${tokenObj.token}">enlace</a> para reestablecer tu contraseña.</p>
             `
         });
         const emailSend = true;

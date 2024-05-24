@@ -1,0 +1,17 @@
+<h1>Administrador de usuarios</h1>
+<ul class="userList">
+    {{#each users}}
+        <li>
+            <h3>Nombre: {{this.first_name}} {{this.last_name}}</h3>
+            <h3>Email: {{this.email}}</h3>
+            <h3>Rol: {{this.rol}}</h3>
+            <div class="adminButtons">
+                <button onclick="modifyRol('{{this._id}}')">Cambiar de rol</button>
+                <button onclick="deleteUser('{{this._id}}')">Eliminar usuario</button>
+            </div>
+        </li>
+    {{/each}}
+</ul>
+<button><a href="/products">Volver</a></button>
+
+<script src="js/index.js"></script>
